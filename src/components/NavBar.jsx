@@ -47,7 +47,6 @@ export default function NavBar() {
   return (
     <>
       <Box
-        backgroundImage="SocialMediaBanner.png"
         backgroundSize="cover"
         px={4}
       >
@@ -58,15 +57,21 @@ export default function NavBar() {
               alignItems="center"
               justifyItems="center"
               justifyContent="center"
-              bg="gray.400"
               borderRadius="10"
             >
-              <Box>
-                <HStack alignContent='center' px='8px' opacity={1}>
-                  <Image src="sunhacks.png" boxSize="50px" opacity={1}/>
-                  <Text>WeatherHack</Text>
-                </HStack>
-              </Box>
+              <HStack alignContent="center" px="8px">
+                <Image
+                  src={
+                    colorMode === "light"
+                      ? "sunhacks-color.png"
+                      : "sunhacks.png"
+                  }
+                  boxSize="50px"
+                />
+                <Text textColor="orange.500" fontWeight="bold">
+                  WeatherHack
+                </Text>
+              </HStack>
             </Box>
           </Box>
 
