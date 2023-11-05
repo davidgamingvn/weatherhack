@@ -7,17 +7,59 @@ import { VStack, Flex, Spacer } from "@chakra-ui/layout";
 import { Heading, Box, Image } from "@chakra-ui/react";
 import NavBar from "./components/NavBar";
 import WeatherCard from "./components/WeatherCard";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs } from "firebase/firestore/lite";
+import { doc, getDoc, query, where } from "firebase/firestore";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAfKMEsS0_ND7JJZRidBmc0C3POGKghl4Q",
+  authDomain: "weatherhack-99633.firebaseapp.com",
+  projectId: "weatherhack-99633",
+  storageBucket: "weatherhack-99633.appspot.com",
+  messagingSenderId: "821541709070",
+  appId: "1:821541709070:web:3c9c174135fe3119c9e35f",
+  measurementId: "G-KK427EM9KK",
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
   const isDark = colorMode === "dark";
   const [location, setLocation] = useState("");
   const [chosenLocation, setChosenLocation] = useState("");
   const [weatherData, setWeatherData] = useState(null);
+  const [translatedData, setTranslatedData] = useState("");
+  /* useEffect(() => {
+    async function fetchAndTranslateWeatherData() {
+      try {
+        const res = await translateText(
+          JSON.stringify(weatherData),
+          targetLanguage
+        );
+        setTranslatedWeatherData(res);
+      } catch (error) {
+        console.error("Error translating data:", error);
+      }
+    }
+
+    fetchAndTranslateWeatherData();
+  }, [weatherData, "fr"]); */
+
   let formattedData = {};
   const handleSubmit = () => {
     location ? fetchWeatherData(location) : alert("Choose your location");
   };
+
+  async function debug(db) {
+    db.collection("translations").doc("RdJwbhCOXEKyKCcTwWo3").get
+    // const col = collection(db, "translations");
+    // const q = query(col, where("input", "==", "A weather forecast app"));
+    // const querySnapshot = await getDocs(q);
+    // querySnapshot.forEach((doc) => {
+    //   // doc.data() is never undefined for query doc snapshots
+    //   console.log(doc.id, " => ", doc.data());
+    // });
+  }
 
   const fetchWeatherData = (city) => {
     const apiKey = "e64dd4bdc513ab2dfe35907d029c8e6f";
@@ -37,21 +79,21 @@ function App() {
       })
       .catch((error) => {
         console.error(error);
-        // Handle errors, e.g., display an error message to the user
+        alert(error); // Handle errors, e.g., display an error message to the user
       });
-    console.log(weatherData);
     formattedData = {
-      "Location": location,
-      "Temperature": weatherData.main.temp,
+      Location: location,
+      Temperature: weatherData.main.temp,
       "Feels like": weatherData.main.feels_like,
       "Min Temperature": weatherData.main.temp_min,
       "Max Temperature": weatherData.main.temp_max,
-      "Pressure": weatherData.main.humidity,
-      "Weather": weatherData.weather[0].description,
+      Pressure: weatherData.main.humidity,
+      Weather: weatherData.weather[0].description,
       "Wind speed": weatherData.wind.speed,
       "Wind Direction": weatherData.wind.deg,
-      "Cloudiness": weatherData.clouds.all,
+      Cloudiness: weatherData.clouds.all,
     };
+    debug(db);
   };
 
   return (
@@ -82,6 +124,15 @@ function App() {
         >
           Use current location
         </Button>
+        <Button
+          my="3"
+          colorScheme="teal"
+          variant="outline"
+          mx="10"
+          onClick={() => fetchWeatherData("Tempe")}
+        >
+          Translate to French
+        </Button>
         <Heading>Your Location: {chosenLocation}</Heading>
         {weatherData && (
           <Box>
@@ -103,8 +154,6 @@ function App() {
               Sunset:{" "}
               {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}
             </Text>
-
-            <WeatherCard data={formattedData}> </WeatherCard>
           </Box>
         )}
       </Box>
