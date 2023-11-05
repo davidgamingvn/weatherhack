@@ -10,10 +10,6 @@ const WeatherDesign = ({ data }) => {
     setShowFullInfo(!showFullInfo);
   };
 
-  useEffect(() => {
-    fetchSunriseSunset(data.coord.lat, data.coord.lon);
-  }, [data.coord.lat, data.coord.lon]);
-
   const fetchSunriseSunset = async (latitude, longitude) => {
     try {
       const response = await axios.get(
@@ -25,7 +21,13 @@ const WeatherDesign = ({ data }) => {
       const sunriseTime = new Date(sunrise).getTime();
       const sunsetTime = new Date(sunset).getTime();
 
-      setBackground(currentTime, sunriseTime, sunsetTime, data.weather[0].description);
+      const newBackgroundImage = setBackground(
+        currentTime,
+        sunriseTime,
+        sunsetTime,
+        data.weather[0].description
+      );
+      setBackgroundImage(newBackgroundImage);
     } catch (error) {
       console.error("Error fetching sunrise and sunset times:", error);
     }
@@ -34,24 +36,66 @@ const WeatherDesign = ({ data }) => {
   const setBackground = (currentTime, sunriseTime, sunsetTime, weatherDescription) => {
     let newBackgroundImage = "";
 
-    if (currentTime >= sunriseTime && currentTime < sunsetTime) {
-      // Daytime
-      if (weatherDescription.includes("clear") && !weatherDescription.includes("cloud")) {
-        newBackgroundImage = "url('https://static.bnr.bg/gallery/cr/medium/2ee68680d762e2f17fb75d56a58a9d98.jpg')"; // Sunny weather image
+    const isDaytime = currentTime >= sunriseTime && currentTime < sunsetTime;
+
+    if (isDaytime) {
+      if (
+        weatherDescription.includes("clear sky") ||
+        weatherDescription.includes("sunny")
+      ) {
+        newBackgroundImage =
+          "url('https://www.vmcdn.ca/f/files/sudbury/uploadedImages/SUMMER_sunWater.jpg;w=660')"; // Image for clear sunny day
+      } else if (
+        weatherDescription.includes("partly cloudy") ||
+        weatherDescription.includes("haze")  ||
+        weatherDescription.includes("smoke") ||
+        weatherDescription.includes("few clouds")
+        
+        
+      ) {
+        newBackgroundImage =
+          "url('https://arizonaoddities.com/wp-content/uploads/2012/06/Clouds.jpg')"; // Image for partly cloudy day
       } else if (weatherDescription.includes("cloud")) {
-        newBackgroundImage = "url('https://static.vecteezy.com/system/resources/previews/001/353/506/non_2x/blue-sky-with-cloud-on-cloudy-day-photo.jpg')"; // Cloudy weather image
+        newBackgroundImage =
+          "url('https://img.freepik.com/premium-photo/blue-sky-background-with-clouds_538646-10263.jpg')"; // Image for cloudy day
+      } else if (
+        weatherDescription.includes("rain") ||
+        weatherDescription.includes("shower")
+      ) {
+        newBackgroundImage =
+          "url('https://i.pinimg.com/736x/9b/40/54/9b40542ed2d19df7530b331e0e5d0a03.jpg')"; // Image for rainy day
       }
     } else {
-      // Nighttime
-      if (weatherDescription.includes("clear") && !weatherDescription.includes("cloud")) {
-        newBackgroundImage = "url('https://images.squarespace-cdn.com/content/v1/57c891d41b631b297aa4aa10/1634324143608-9HCUM6OTEX1ZZSRD0AZZ/night-sky-stars.jpg')"; // Clear night image
+      if (
+        weatherDescription.includes("clear sky") ||
+        weatherDescription.includes("dark")
+      ) {
+        newBackgroundImage =
+          "url('https://wallpapercave.com/wp/wp5569646.jpg')"; // Image for clear night sky
+      } else if (
+        weatherDescription.includes("partly cloudy") ||
+        weatherDescription.includes("few clouds")
+      ) {
+        newBackgroundImage =
+          "url('https://img.freepik.com/premium-photo/night-sky-sea-background-full-moon_568886-839.jpg')"; // Image for partly cloudy night
       } else if (weatherDescription.includes("cloud")) {
-        newBackgroundImage = "url('https://t3.ftcdn.net/jpg/03/80/42/46/360_F_380424606_6qJIhGTtcS3j8wZ6QfTdKeEuCLwoC2A9.jpg')"; // Cloudy night image
+        newBackgroundImage =
+          "url('https://live.staticflickr.com/8372/8593604572_4ac513bcb2_b.jpg')"; // Image for cloudy night
+      } else if (
+        weatherDescription.includes("rain") ||
+        weatherDescription.includes("shower")
+      ) {
+        newBackgroundImage =
+          "url('https://img.freepik.com/free-vector/realistic-clouds-with-falling-rain_1017-33597.jpg')"; // Image for rainy night
       }
     }
 
-    setBackgroundImage(newBackgroundImage);
+    return newBackgroundImage;
   };
+
+  useEffect(() => {
+    fetchSunriseSunset(data.coord.lat, data.coord.lon);
+  }, [data.coord.lat, data.coord.lon]);
 
   const backgroundStyle = {
     backgroundImage: backgroundImage,
