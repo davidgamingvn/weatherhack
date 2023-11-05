@@ -121,28 +121,7 @@ function App() {
             Use current location
           </Button>
           <Heading>Your Location: {chosenLocation}</Heading>
-          {weatherData && (
-            <Box>
-              <Text>Temperature: {weatherData.main.temp}°C</Text>
-              <Text>Feels Like: {weatherData.main.feels_like}°C</Text>
-              <Text>Min Temperature: {weatherData.main.temp_min}°C</Text>
-              <Text>Max Temperature: {weatherData.main.temp_max}°C</Text>
-              <Text>Humidity: {weatherData.main.humidity}%</Text>
-              <Text>Pressure: {weatherData.main.pressure} hPa</Text>
-              <Text>Weather: {weatherData.weather[0].description}</Text>
-              <Text>Wind Speed: {weatherData.wind.speed} m/s</Text>
-              <Text>Wind Direction: {weatherData.wind.deg}°</Text>
-              <Text>Cloudiness: {weatherData.clouds.all}%</Text>
-              <Text>
-                Sunrise:{" "}
-                {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}
-              </Text>
-              <Text>
-                Sunset:{" "}
-                {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}
-              </Text>
-            </Box>
-          )}
+          {weatherData && <WeatherCard data={weatherData}></WeatherCard>}
         </Box>
         <Box>
           <Tabs>
@@ -157,7 +136,7 @@ function App() {
               {languages.map((language) => (
                 <TabPanel key={language.id} id={`tabpanel-${language.id}`}>
                   {/* Display translated text for the selected language here */}
-                  <WeatherCard></WeatherCard>
+                  <WeatherCard data={weatherData}></WeatherCard>
                 </TabPanel>
               ))}
             </TabPanels>
