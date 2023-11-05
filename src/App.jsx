@@ -7,6 +7,7 @@ import { VStack, Flex, Spacer } from "@chakra-ui/layout";
 import { Heading, Box, Image } from "@chakra-ui/react";
 import NavBar from "./components/NavBar";
 import WeatherCard from "./components/WeatherCard";
+import WeatherDesign from "./components/elementui";
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -25,6 +26,7 @@ function App() {
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
     )
       .then((response) => response.json())
+
       .then((data) => {
         data.main.temp = (data.main.temp - 273.15).toFixed(2);
         data.main.feels_like = (data.main.feels_like - 273.15).toFixed(2);
@@ -85,25 +87,7 @@ function App() {
         <Heading>Your Location: {chosenLocation}</Heading>
         {weatherData && (
           <Box>
-            <Text>Temperature: {weatherData.main.temp}°C</Text>
-            <Text>Feels Like: {weatherData.main.feels_like}°C</Text>
-            <Text>Min Temperature: {weatherData.main.temp_min}°C</Text>
-            <Text>Max Temperature: {weatherData.main.temp_max}°C</Text>
-            <Text>Humidity: {weatherData.main.humidity}%</Text>
-            <Text>Pressure: {weatherData.main.pressure} hPa</Text>
-            <Text>Weather: {weatherData.weather[0].description}</Text>
-            <Text>Wind Speed: {weatherData.wind.speed} m/s</Text>
-            <Text>Wind Direction: {weatherData.wind.deg}°</Text>
-            <Text>Cloudiness: {weatherData.clouds.all}%</Text>
-            <Text>
-              Sunrise:{" "}
-              {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}
-            </Text>
-            <Text>
-              Sunset:{" "}
-              {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}
-            </Text>
-
+            <WeatherDesign data={weatherData}></WeatherDesign>
             <WeatherCard data={formattedData}> </WeatherCard>
           </Box>
         )}
