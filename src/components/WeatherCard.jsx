@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Text, Button } from "@chakra-ui/react";
 import axios from "axios";
 
-const WeatherCard = ({ data }) => {
+const WeatherCard = ({ data, transData, targetLanguage }) => {
   const [showFullInfo, setShowFullInfo] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState("");
 
@@ -33,7 +33,12 @@ const WeatherCard = ({ data }) => {
     }
   };
 
-  const setBackground = (currentTime, sunriseTime, sunsetTime, weatherDescription) => {
+  const setBackground = (
+    currentTime,
+    sunriseTime,
+    sunsetTime,
+    weatherDescription
+  ) => {
     let newBackgroundImage = "";
 
     const isDaytime = currentTime >= sunriseTime && currentTime < sunsetTime;
@@ -47,11 +52,9 @@ const WeatherCard = ({ data }) => {
           "url('https://www.vmcdn.ca/f/files/sudbury/uploadedImages/SUMMER_sunWater.jpg;w=660')"; // Image for clear sunny day
       } else if (
         weatherDescription.includes("partly cloudy") ||
-        weatherDescription.includes("haze")  ||
+        weatherDescription.includes("haze") ||
         weatherDescription.includes("smoke") ||
         weatherDescription.includes("few clouds")
-        
-        
       ) {
         newBackgroundImage =
           "url('https://arizonaoddities.com/wp-content/uploads/2012/06/Clouds.jpg')"; // Image for partly cloudy day
@@ -105,29 +108,53 @@ const WeatherCard = ({ data }) => {
   };
 
   return (
-    <Box borderWidth="1px" borderRadius="lg" p={4} mt={4} style={backgroundStyle}>
-      <Text fontSize="2xl">Weather Information</Text>
-      <Text>Temperature: {data.main.temp}°C</Text>
-      <Text>Feels Like: {data.main.feels_like}°C</Text>
+    <Box
+      borderWidth="1px"
+      borderRadius="lg"
+      p={4}
+      mt={4}
+      style={backgroundStyle}
+    >
+      <Text>
+        {transData.temp[targetLanguage]}: {data.main.temp}°C
+      </Text>
+      <Text>
+        {transData.feels_like[targetLanguage]}: {data.main.feels_like}°C
+      </Text>
       {showFullInfo && (
         <>
-          <Text>Max Temperature: {data.main.temp_max}°C</Text>
-          <Text>Min Temperature: {data.main.temp_min}°C</Text>
-          <Text>Humidity: {data.main.humidity}%</Text>
-          <Text>Pressure: {data.main.pressure} hPa</Text>
-          <Text>Weather: {data.weather[0].description}</Text>
-          <Text>Wind Speed: {data.wind.speed} m/s</Text>
-          <Text>Wind Direction: {data.wind.deg}°</Text>
-          <Text>Cloudiness: {data.clouds.all}%</Text>
           <Text>
-            Sunrise: {new Date(data.sys.sunrise * 1000).toLocaleTimeString()}
+            {transData.max_temp[targetLanguage]}: {data.main.temp_max}°C
           </Text>
           <Text>
-            Sunset: {new Date(data.sys.sunset * 1000).toLocaleTimeString()}
+            {transData.min_temp[targetLanguage]}: {data.main.temp_min}°C
+          </Text>
+          <Text>
+            {transData.humidity[targetLanguage]}: {data.main.humidity}%
+          </Text>
+          <Text>
+            {transData.pressure[targetLanguage]}: {data.main.pressure} hPa
+          </Text>
+          <Text>
+            {transData.wind_speed[targetLanguage]}: {data.wind.speed} m/s
+          </Text>
+          <Text>
+            {transData.wind_direction[targetLanguage]}: {data.wind.deg}°
+          </Text>
+          <Text>
+            {transData.haze[targetLanguage]}: {data.clouds.all}%
+          </Text>
+          <Text>
+            {transData.sunrise[targetLanguage]}:{" "}
+            {new Date(data.sys.sunrise * 1000).toLocaleTimeString()}
+          </Text>
+          <Text>
+            {transData.sunset[targetLanguage]}:{" "}
+            {new Date(data.sys.sunset * 1000).toLocaleTimeString()}
           </Text>
         </>
       )}
-      <Button mt={2} colorScheme="teal" onClick={toggleFullInfo}>
+      <Button mt={2} colorScheme="yellow" onClick={toggleFullInfo}>
         {showFullInfo ? "Show Less" : "Show More"}
       </Button>
     </Box>

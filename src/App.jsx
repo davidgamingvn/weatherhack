@@ -3,7 +3,7 @@ import { IconButton, Button } from "@chakra-ui/button";
 import { useColorMode } from "@chakra-ui/color-mode";
 import { Input, Text } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { VStack, Flex, Spacer } from "@chakra-ui/layout";
+import { VStack, Flex, Spacer, HStack } from "@chakra-ui/layout";
 import { Heading, Box, Image } from "@chakra-ui/react";
 import {
   Grid,
@@ -24,10 +24,8 @@ function App() {
   const [chosenLocation, setChosenLocation] = useState("");
   const [weatherData, setWeatherData] = useState(null);
   const [translatedData, setTranslatedData] = useState({});
-  const [translated, setTranslated] = useState(false);
 
   let formattedData = {};
-  let targetLanguage;
   const handleSubmit = () => {
     location ? fetchWeatherData(location) : alert("Choose your location");
   };
@@ -81,18 +79,25 @@ function App() {
     fetchTranslation();
   }, []);
 
+  /*en,es,de,fr,vi,ja,zh  */
   const languages = [
-    { id: "french", name: "French" },
-    { id: "german", name: "German" },
-    { id: "vietnamese", name: "Vietnamese" },
+    { id: "fr", name: "French" },
+    { id: "de", name: "German" },
+    { id: "es", name: "Spanish" },
+    { id: "ja", name: "Japanese" },
+    { id: "vi", name: "Vietnamese" },
+    { id: "zh", name: "Chinese" },
   ];
 
   return (
     <div className="App">
       <NavBar />
-      <Heading px="50px" py="50px">
-        A weather forecast app
-      </Heading>
+      <HStack my='-10' mx='50'>
+        <Image
+          src="https://firebase.google.com/static/downloads/brand-guidelines/SVG/logo-built_white.svg"
+          boxSize="300px"
+        />{" "}
+      </HStack>
       <Grid templateColumns="repeat(2, 1fr)" gap={3}>
         <Box
           mx="50"
@@ -112,7 +117,7 @@ function App() {
           </Button>
           <Button
             my="3"
-            colorScheme="teal"
+            colorScheme="yellow"
             variant="outline"
             onClick={() => {
               fetchWeatherData("Tempe");
@@ -121,9 +126,15 @@ function App() {
             Use current location
           </Button>
           <Heading>Your Location: {chosenLocation}</Heading>
-          {weatherData && <WeatherCard data={weatherData}></WeatherCard>}
+          {weatherData && (
+            <WeatherCard
+              data={weatherData}
+              transData={translatedData}
+              targetLanguage="en"
+            ></WeatherCard>
+          )}
         </Box>
-        <Box>
+        <Box py="95">
           <Tabs>
             <TabList>
               {languages.map((language) => (
@@ -136,7 +147,13 @@ function App() {
               {languages.map((language) => (
                 <TabPanel key={language.id} id={`tabpanel-${language.id}`}>
                   {/* Display translated text for the selected language here */}
-                  <WeatherCard data={weatherData}></WeatherCard>
+                  {weatherData && (
+                    <WeatherCard
+                      data={weatherData}
+                      transData={translatedData}
+                      targetLanguage={language.id}
+                    ></WeatherCard>
+                  )}
                 </TabPanel>
               ))}
             </TabPanels>
